@@ -5,9 +5,19 @@
     let cursor;
 
     function updateUI () {
-        $('#number-of-notes').innerText = notes ? notes.length : '';
-        $('#cursor-position').innerText = typeof cursor === 'number' ? cursor : '';
-        $('#current-note-text').innerText = notes ? notes[cursor].text : '';
+        if (notes) {
+            // assumption: if notes, then cursor is also a number
+            $('#number-of-notes').innerText = notes.length;
+            $('#cursor-position').innerText = cursor;
+            $('#current-note-text').innerText = notes[cursor].text;
+            $('#number-of-notes').parentElement.style.display = 'revert';
+            $('#cursor-position').parentElement.style.display = 'revert';
+            $('#current-note-text').parentElement.style.display = 'revert';
+        } else {
+            $('#number-of-notes').parentElement.style.display = 'none';
+            $('#cursor-position').parentElement.style.display = 'none';
+            $('#current-note-text').parentElement.style.display = 'none';
+        }
     };
 
     function resetUltraStarFile () {
@@ -186,10 +196,10 @@
             navigator.requestMIDIAccess({
                 sysex: false
             }).then((access) => {
-                const input = [...access.inputs.values()].find((input) => input.name.startsWith("YAMAHA"));
+                const input = [...access.inputs.values()].find((input) => input.name.toLowerCase().indexOf($('#midi-search-query').value.toLowerCase()) !== -1);
                 input.addEventListener('midimessage', onMIDIMessage);
                 event.target.disabled = true;
-                event.target.innerText = 'MIDI connected';
+                event.target.innerText = 'Connected';
             }).catch(() => {
                 alert('Could not connect MIDI');
             })
@@ -313,5 +323,7 @@
             resetUltraStarFile();
             onSongLoaded('imported.txt', lines.join('\n') + '\nE\n');
         });
+
+        updateUI();
     });
 })(document.querySelector.bind(document));

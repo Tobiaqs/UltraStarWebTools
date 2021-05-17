@@ -15,12 +15,17 @@
     <div id="app">
         <table>
             <tr>
-                <td><button id="request-midi-btn">Connect MIDI</button></td>
+                <td>MIDI device name: </td>
+                <td><input type="text" id="midi-search-query" value="YAMAHA" placeholder="MIDI device search query"></td>
             </tr>
             <tr>
-                <td><label for="ultrastar-file">UltraStar TXT file: </label></td>
+                <td>MIDI connection: </td>
+                <td><button id="request-midi-btn">Connect</button></td>
+            </tr>
+            <tr>
+                <td><label for="ultrastar-file">Project file: </label></td>
                 <td><input type="file" accept="text/plain" id="ultrastar-file"></td>
-                <td><button id="import-lyrics">Convert to plain lyrics</button></td>
+                <td><button id="import-lyrics">Extract lyrics</button></td>
             </tr>
             <tr>
                 <td><label for="mp3-file">MP3 file: </label></td>
@@ -43,22 +48,22 @@
                 <td><input type="checkbox" id="record-times" checked></td>
             </tr>
             <tr>
-                <td>Number of notes</td>
+                <td>Number of notes: </td>
                 <td id="number-of-notes"></td>
             </tr>
             <tr>
-                <td>Cursor position</td>
+                <td>Cursor position: </td>
                 <td id="cursor-position"></td>
             </tr>
             <tr>
-                <td>Current note text</td>
+                <td>Current note text: </td>
                 <td id="current-note-text"></td>
             </tr>
         </table>
 
         <div>
             <label for="lyrics">Lyrics: </label><br><textarea id="lyrics" placeholder="Lyrics with all syllables separated with +" rows="40" cols="70"></textarea><br>
-            <button id="import-ultrastar-file">Import as UltraStar TXT file</button><br>
+            <button id="import-ultrastar-file">Import as new project</button><br>
             <audio id="mp3-player" controls></audio><br>
             <br>
             <button id="export-now-btn">Export now</button>
