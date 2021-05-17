@@ -1,17 +1,17 @@
-(() => {
+(($) => {
     let fileName;
     let fileContents;
     let notes;
     let cursor;
 
     function updateUI () {
-        document.querySelector('#number-of-notes').innerText = notes ? notes.length : '';
-        document.querySelector('#cursor-position').innerText = typeof cursor === 'number' ? cursor : '';
-        document.querySelector('#current-note-text').innerText = notes ? notes[cursor].text : '';
+        $('#number-of-notes').innerText = notes ? notes.length : '';
+        $('#cursor-position').innerText = typeof cursor === 'number' ? cursor : '';
+        $('#current-note-text').innerText = notes ? notes[cursor].text : '';
     };
 
     function resetUltraStarFile () {
-        document.querySelector('#ultrastar-file').value = null;
+        $('#ultrastar-file').value = null;
         fileName = null;
         fileContents = null;
         notes = null;
@@ -106,15 +106,15 @@
         // Always store key pressed (for recording end times)
         notes[cursor].key = key;
 
-        if (document.querySelector('#record-notes').checked) {
+        if ($('#record-notes').checked) {
             notes[cursor].note = key - 60;
         }
 
-        if (document.querySelector('#record-times').checked && !document.querySelector('#mp3-player').paused && document.querySelector('#mp3-player').currentTime !== 0) {
+        if ($('#record-times').checked && !$('#mp3-player').paused && $('#mp3-player').currentTime !== 0) {
             // 1 beat = 10 ms (6000 bpm)
-            notes[cursor].start_s = document.querySelector('#mp3-player').currentTime;
+            notes[cursor].start_s = $('#mp3-player').currentTime;
             notes[cursor].end_s = null;
-            notes[cursor].time = Math.round(document.querySelector('#mp3-player').currentTime * 100);
+            notes[cursor].time = Math.round($('#mp3-player').currentTime * 100);
         }
 
         nextNote();
@@ -145,15 +145,15 @@
             } else if (!pitchBendFlag && value > 64) {
                 pitchBendFlag = true;
                 nextNote();
-                if (!document.querySelector('#mp3-player').paused) {
-                    document.querySelector('#mp3-player').currentTime = Math.max(notes[cursor].start_s - document.querySelector('#mp3-player').playbackRate, 0);
+                if (!$('#mp3-player').paused) {
+                    $('#mp3-player').currentTime = Math.max(notes[cursor].start_s - $('#mp3-player').playbackRate, 0);
                 }
                 updateUI();
             } else if (!pitchBendFlag && value < 64) {
                 pitchBendFlag = true;
                 prevNote();
-                if (!document.querySelector('#mp3-player').paused) {
-                    document.querySelector('#mp3-player').currentTime = Math.max(notes[cursor].start_s - document.querySelector('#mp3-player').playbackRate, 0);
+                if (!$('#mp3-player').paused) {
+                    $('#mp3-player').currentTime = Math.max(notes[cursor].start_s - $('#mp3-player').playbackRate, 0);
                 }
                 updateUI();
             }
@@ -162,10 +162,10 @@
         }
 
         // key release & recording times
-        if (message.data[2] === 0 && document.querySelector('#record-times').checked && !document.querySelector('#mp3-player').paused && document.querySelector('#mp3-player').currentTime !== 0) {
+        if (message.data[2] === 0 && $('#record-times').checked && !$('#mp3-player').paused && $('#mp3-player').currentTime !== 0) {
             for (let i = cursor; i >= 0; i--) {
                 if (notes[i].start_s && !notes[i].end_s && notes[i].key === message.data[1]) {
-                    notes[i].end_s = document.querySelector('#mp3-player').currentTime;
+                    notes[i].end_s = $('#mp3-player').currentTime;
                 }
             }
             return;
@@ -182,7 +182,7 @@
     };
 
     window.addEventListener('load', () => {
-        document.querySelector('#request-midi-btn').addEventListener('click', (event) => {
+        $('#request-midi-btn').addEventListener('click', (event) => {
             navigator.requestMIDIAccess({
                 sysex: false
             }).then((access) => {
@@ -190,10 +190,12 @@
                 input.addEventListener('midimessage', onMIDIMessage);
                 event.target.disabled = true;
                 event.target.innerText = 'MIDI connected';
-            });
+            }).catch(() => {
+                alert('Could not connect MIDI');
+            })
         });
 
-        document.querySelector('#import-lyrics').addEventListener('click', () => {
+        $('#import-lyrics').addEventListener('click', () => {
             if (!notes) {
                 alert('No file has been loaded yet');
                 return;
@@ -222,11 +224,11 @@
                 }
             });
 
-            document.querySelector('#lyrics').value = lyricLines.join('\n') + '\n';
+            $('#lyrics').value = lyricLines.join('\n') + '\n';
             resetUltraStarFile();
         });
 
-        document.querySelector('#ultrastar-file').addEventListener('change', (event) => {
+        $('#ultrastar-file').addEventListener('change', (event) => {
             if (event.target.files.length !== 1) {
                 return;
             }
@@ -239,32 +241,32 @@
             reader.readAsText(event.target.files[0]);
         });
 
-        document.querySelector('#export-now-btn').addEventListener('click', exportNow);
+        $('#export-now-btn').addEventListener('click', exportNow);
 
-        document.querySelector('#mp3-file').addEventListener('change', (event) => {
+        $('#mp3-file').addEventListener('change', (event) => {
             if (event.target.files.length !== 1) {
                 return;
             }
-            const playbackRate = document.querySelector('#mp3-player').playbackRate;
+            const playbackRate = $('#mp3-player').playbackRate;
             const url = URL.createObjectURL(event.target.files[0]);
-            document.querySelector('#mp3-player').src = url;
-            document.querySelector('#mp3-player').playbackRate = playbackRate;
+            $('#mp3-player').src = url;
+            $('#mp3-player').playbackRate = playbackRate;
         });
 
-        document.querySelector('#set-playback-rate').addEventListener('keypress', (event) => {
+        $('#set-playback-rate').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
-                document.querySelector('#mp3-player').playbackRate = parseFloat(event.target.value);
-                console.log(document.querySelector('#mp3-player').playbackRate);
-                document.querySelector('#playback-rate').innerHTML = document.querySelector('#mp3-player').playbackRate.toFixed(2);
+                $('#mp3-player').playbackRate = parseFloat(event.target.value);
+                console.log($('#mp3-player').playbackRate);
+                $('#playback-rate').innerHTML = $('#mp3-player').playbackRate.toFixed(2);
             }
         });
 
-        document.querySelector('#import-ultrastar-file').addEventListener('click', () => {
-            if (document.querySelector('#lyrics').value === '') {
+        $('#import-ultrastar-file').addEventListener('click', () => {
+            if ($('#lyrics').value === '') {
                 return;
             }
 
-            const lyricLines = document.querySelector('#lyrics').value.trim().split('\n');
+            const lyricLines = $('#lyrics').value.trim().split('\n');
             sentences = [];
             lyricLines.forEach((line) => {
                 line = line.trim();
@@ -312,4 +314,4 @@
             onSongLoaded('imported.txt', lines.join('\n') + '\nE\n');
         });
     });
-})();
+})(document.querySelector.bind(document));
