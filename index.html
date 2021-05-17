@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraStar WebTools</title>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+    <div id="menu">
+        <div id="title">UltraStar WebTools</div>
+    </div>
+    <div id="app">
+        <table>
+            <tr>
+                <td><button id="request-midi-btn">Connect MIDI</button></td>
+            </tr>
+            <tr>
+                <td><label for="ultrastar-file">UltraStar TXT file: </label></td>
+                <td><input type="file" accept="text/plain" id="ultrastar-file"></td>
+                <td><button id="import-lyrics">Convert to plain lyrics</button></td>
+            </tr>
+            <tr>
+                <td><label for="mp3-file">MP3 file: </label></td>
+                <td><input type="file" accept="audio/mp3" id="mp3-file"></td>
+            </tr>
+            <tr>
+                <td><label for="set-playback-rate">MP3 playback rate: </label></td>
+                <td><input type="text" id="set-playback-rate" value="1.00"></td>
+            </tr>
+            <tr>
+                <td><label for="playback-rate">MP3 playback rate: </label></td>
+                <td id="playback-rate">1.00</td>
+            </tr>
+            <tr>
+                <td><label for="record-notes">Record notes: </label></td>
+                <td><input type="checkbox" id="record-notes" checked></td>
+            </tr>
+            <tr>
+                <td><label for="record-times">Record times: </label></td>
+                <td><input type="checkbox" id="record-times" checked></td>
+            </tr>
+            <tr>
+                <td>Number of notes</td>
+                <td id="number-of-notes"></td>
+            </tr>
+            <tr>
+                <td>Cursor position</td>
+                <td id="cursor-position"></td>
+            </tr>
+            <tr>
+                <td>Current note text</td>
+                <td id="current-note-text"></td>
+            </tr>
+        </table>
+
+        <div>
+            <label for="lyrics">Lyrics: </label><br><textarea id="lyrics" placeholder="Lyrics with all syllables separated with +" rows="40" cols="70"></textarea><br>
+            <button id="import-ultrastar-file">Import as UltraStar TXT file</button><br>
+            <audio id="mp3-player" controls></audio><br>
+            <br>
+            <button id="export-now-btn">Export now</button>
+        </div>
+    </div>
+</body>
+</html>
