@@ -148,9 +148,17 @@
         }
     };
 
+    const frequencyCache = {};
+
     function calcFrequencyFromPianoKey(key) {
+        const keyStr = key.toString();
+        if (keyStr in frequencyCache) {
+            return frequencyCache[keyStr];
+        }
         // https://en.wikipedia.org/wiki/Piano_key_frequencies
-        return Math.pow(2, (key - 49) / 12) * 440;
+        const freq = Math.pow(2, (key - 49) / 12) * 440;
+        frequencyCache[keyStr] = freq;
+        return freq;
     };
 
     function calcFrequencyFromMIDIKey(midiKey) {
