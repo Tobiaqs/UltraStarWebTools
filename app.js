@@ -121,7 +121,7 @@
         notes[cursor].key = key;
 
         if ($('#record-notes').checked) {
-            notes[cursor].note = key - 60;
+            notes[cursor].note = key - 72 + midiTranspose;
         }
 
         if ($('#record-times').checked && !$('#mp3-player').paused && $('#mp3-player').currentTime !== 0) {
@@ -192,6 +192,7 @@
             return;
         }
 
+        // synth
         if (message.data[0] === 144 && $('#midi-synth').checked) {
             if (message.data[2] !== 0) {
                 synth.triggerAttack(calcFrequencyFromMIDIKey(message.data[1] + midiTranspose), now);
