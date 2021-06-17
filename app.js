@@ -1,4 +1,8 @@
 (($) => {
+    const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+    const now = Tone.now();
+    let midiTranspose = 0;
+
     let fileName;
     let fileContents;
     let notes;
@@ -121,7 +125,7 @@
         }
 
         if ($('#record-times').checked && !$('#mp3-player').paused && $('#mp3-player').currentTime !== 0) {
-            // 1 beat = 10 ms (6000 bpm)
+            // 1 beat = 10 ms (1500 x 4 = 6000)
             notes[cursor].start_s = $('#mp3-player').currentTime;
             notes[cursor].end_s = null;
             notes[cursor].time = Math.round($('#mp3-player').currentTime * 100);
@@ -144,6 +148,15 @@
         }
     };
 
+    function calcFrequencyFromPianoKey(key) {
+        // https://en.wikipedia.org/wiki/Piano_key_frequencies
+        return Math.pow(2, (key - 49) / 12) * 440;
+    };
+
+    function calcFrequencyFromMIDIKey(midiKey) {
+        return calcFrequencyFromPianoKey(midiKey - 44);
+    }
+
     let pitchBendFlag = false;
 
     function onMIDIMessage (message) {
@@ -155,20 +168,28 @@
             } else if (!pitchBendFlag && value > 64) {
                 pitchBendFlag = true;
                 nextNote();
-                if (!$('#mp3-player').paused) {
+                if (!$('#mp3-player').paused && notes[cursor].start_s) {
                     $('#mp3-player').currentTime = Math.max(notes[cursor].start_s - $('#mp3-player').playbackRate, 0);
                 }
                 updateUI();
             } else if (!pitchBendFlag && value < 64) {
                 pitchBendFlag = true;
                 prevNote();
-                if (!$('#mp3-player').paused) {
+                if (!$('#mp3-player').paused && notes[cursor].start_s) {
                     $('#mp3-player').currentTime = Math.max(notes[cursor].start_s - $('#mp3-player').playbackRate, 0);
                 }
                 updateUI();
             }
 
             return;
+        }
+
+        if (message.data[0] === 144 && $('#midi-synth').checked) {
+            if (message.data[2] !== 0) {
+                synth.triggerAttack(calcFrequencyFromMIDIKey(message.data[1] + midiTranspose), now);
+            } else {
+                synth.triggerRelease(calcFrequencyFromMIDIKey(message.data[1] + midiTranspose), now);
+            }
         }
 
         // key release & recording times
@@ -202,7 +223,9 @@
                 event.target.innerText = 'Connected';
             }).catch(() => {
                 alert('Could not connect MIDI');
-            })
+            });
+
+            Tone.start().catch(() => alert('Synth could not be started'));
         });
 
         $('#import-lyrics').addEventListener('click', () => {
@@ -266,8 +289,14 @@
         $('#set-playback-rate').addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 $('#mp3-player').playbackRate = parseFloat(event.target.value);
-                console.log($('#mp3-player').playbackRate);
                 $('#playback-rate').innerHTML = $('#mp3-player').playbackRate.toFixed(2);
+            }
+        });
+
+        $('#set-midi-transpose').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                midiTranspose = parseInt(event.target.value, 10);
+                $('#midi-transpose').innerHTML = parseInt(event.target.value, 10);
             }
         });
 
@@ -307,7 +336,7 @@
                 '#TITLE:Imported',
                 '#ARTIST:Imported',
                 '#CREATOR:UltraStar WebTools - https://uswt.tobiass.nl',
-                '#BPM:1500', // 10 ms precision
+                '#BPM:1500', // 10 ms precision (1500x4=6000)
                 '#GAP:0'
             ];
 

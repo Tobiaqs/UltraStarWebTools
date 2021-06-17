@@ -5,8 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UltraStar WebTools</title>
-    <script src="app.js"></script>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="/node_modules/tone/build/Tone.js"></script>
+    <script src="/app.js"></script>
+    <link rel="stylesheet" href="/style.css" type="text/css">
 </head>
 <body>
     <div id="menu">
@@ -17,7 +18,7 @@
         <table>
             <tr>
                 <td>MIDI device name: </td>
-                <td><input type="text" id="midi-search-query" value="YAMAHA" placeholder="MIDI device search query"></td>
+                <td><input type="text" id="midi-search-query" value="Keystation" placeholder="MIDI device search query"></td>
             </tr>
             <tr>
                 <td>MIDI connection: </td>
@@ -39,6 +40,18 @@
             <tr>
                 <td><label for="playback-rate">MP3 playback rate: </label></td>
                 <td id="playback-rate">1.00</td>
+            </tr>
+            <tr>
+                <td><label for="set-midi-transpose">MIDI transpose: </label></td>
+                <td><input type="text" id="set-midi-transpose" value="0"></td>
+            </tr>
+            <tr>
+                <td><label for="midi-transpose">MIDI transpose: </label></td>
+                <td id="midi-transpose">0</td>
+            </tr>
+            <tr>
+                <td><label for="midi-synth">MIDI synth: </label></td>
+                <td><input type="checkbox" id="midi-synth" checked></td>
             </tr>
             <tr>
                 <td><label for="record-notes">Record notes: </label></td>
