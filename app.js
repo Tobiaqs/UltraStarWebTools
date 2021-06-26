@@ -121,7 +121,7 @@
         notes[cursor].key = key;
 
         if ($('#record-notes').checked) {
-            notes[cursor].note = key - 72 + midiTranspose;
+            notes[cursor].note = key - 60 + midiTranspose;
         }
 
         if ($('#record-times').checked && !$('#mp3-player').paused && $('#mp3-player').currentTime !== 0) {
@@ -195,9 +195,9 @@
         // synth
         if (message.data[0] === 144 && $('#midi-synth').checked) {
             if (message.data[2] !== 0) {
-                synth.triggerAttack(calcFrequencyFromMIDIKey(message.data[1] + midiTranspose), now);
+                synth.triggerAttack(calcFrequencyFromMIDIKey(message.data[1] + 24 + midiTranspose), now);
             } else {
-                synth.triggerRelease(calcFrequencyFromMIDIKey(message.data[1] + midiTranspose), now);
+                synth.triggerRelease(calcFrequencyFromMIDIKey(message.data[1] + 24 + midiTranspose), now);
             }
         }
 
@@ -346,7 +346,9 @@
                 '#ARTIST:Imported',
                 '#CREATOR:UltraStar WebTools - https://uswt.tobiass.nl',
                 '#BPM:1500', // 10 ms precision (1500x4=6000)
-                '#GAP:0'
+                '#GAP:0',
+                '#MP3:<mp3 file>',
+                '#VIDEO:<video file>'
             ];
 
             sentences.forEach((sentence, idx) => {
